@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: Task Manager
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/task_manager?serverVersion=16&charset=utf8
+    username: task_manager
+    password: task_manager
+
+jwt:
+  secret: faadd63584c84e672ff5824b4f85226faadd63584c84e672ff5824b4f85226
+  accessTokenExpiration: 10m
