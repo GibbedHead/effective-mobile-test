@@ -36,19 +36,15 @@ public class UserService implements UserDetailsService {
         return saveUser(user);
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("User '%s' not found".formatted(username))
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("User '%s' not found".formatted(email))
         );
         return mapUserToUserDetails(user);
     }
