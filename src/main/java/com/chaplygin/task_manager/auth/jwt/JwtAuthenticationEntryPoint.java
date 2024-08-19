@@ -1,4 +1,4 @@
-package com.chaplygin.task_manager.security;
+package com.chaplygin.task_manager.auth.jwt;
 
 import com.chaplygin.task_manager.exception.model.AppErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,7 +1,7 @@
-package com.chaplygin.task_manager.config;
+package com.chaplygin.task_manager.auth.config;
 
-import com.chaplygin.task_manager.security.JwtAuthenticationEntryPoint;
-import com.chaplygin.task_manager.security.JwtAuthenticationFilter;
+import com.chaplygin.task_manager.auth.jwt.JwtAuthenticationEntryPoint;
+import com.chaplygin.task_manager.auth.jwt.JwtAuthenticationFilter;
 import com.chaplygin.task_manager.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
