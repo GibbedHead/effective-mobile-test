@@ -55,6 +55,16 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(appErrorResponse, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+        AppErrorResponse appErrorResponse = new AppErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                ex.getMessage()
+        );
+
+        return new ResponseEntity<>(appErrorResponse, HttpStatus.FORBIDDEN);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,

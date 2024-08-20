@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "tasks")
 @Getter
@@ -53,4 +55,15 @@ public class Task {
     @Column(name = "priority", nullable = false)
     private Priority priority;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task task)) return false;
+        return Objects.equals(id, task.id) && Objects.equals(title, task.title) && Objects.equals(description, task.description) && Objects.equals(owner, task.owner) && Objects.equals(assignee, task.assignee) && status == task.status && priority == task.priority;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, owner, assignee, status, priority);
+    }
 }

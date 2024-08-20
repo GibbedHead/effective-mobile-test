@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.task.controller;
 
+import com.chaplygin.task_manager.permission.annotation.CheckTaskPermission;
 import com.chaplygin.task_manager.task.dto.TaskCreateDto;
 import com.chaplygin.task_manager.task.dto.TaskResponseDtoFull;
 import com.chaplygin.task_manager.task.mapper.TaskMapper;
@@ -53,6 +54,7 @@ public class TaskController {
         return taskMapper.mapTaskToResponseDtoFull(taskService.getTaskById(id));
     }
 
+    @CheckTaskPermission(action = "delete")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTaskById(@PathVariable Long id) {
