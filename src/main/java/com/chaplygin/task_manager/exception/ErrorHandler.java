@@ -1,9 +1,6 @@
 package com.chaplygin.task_manager.exception;
 
-import com.chaplygin.task_manager.exception.model.AccessTokenExpiredException;
-import com.chaplygin.task_manager.exception.model.AccessTokenSignatureException;
-import com.chaplygin.task_manager.exception.model.AppErrorResponse;
-import com.chaplygin.task_manager.exception.model.InvalidUserException;
+import com.chaplygin.task_manager.exception.model.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -43,6 +40,16 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         AppErrorResponse appErrorResponse = new AppErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
                 "Access token sign error: '%s'".formatted(ex.getMessage())
+        );
+
+        return new ResponseEntity<>(appErrorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Object> handleTaskNotFoundException(TaskNotFoundException ex) {
+        AppErrorResponse appErrorResponse = new AppErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
         );
 
         return new ResponseEntity<>(appErrorResponse, HttpStatus.FORBIDDEN);

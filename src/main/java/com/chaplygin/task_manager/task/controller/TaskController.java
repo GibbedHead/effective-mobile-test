@@ -46,4 +46,16 @@ public class TaskController {
                 .map(taskMapper::mapTaskToResponseDtoFull)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskResponseDtoFull getTaskById(@PathVariable Long id) {
+        return taskMapper.mapTaskToResponseDtoFull(taskService.getTaskById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTaskById(@PathVariable Long id) {
+        taskService.deleteTaskById(id);
+    }
 }

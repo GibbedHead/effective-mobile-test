@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.task.service;
 
+import com.chaplygin.task_manager.exception.model.TaskNotFoundException;
 import com.chaplygin.task_manager.task.model.Task;
 import com.chaplygin.task_manager.task.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,16 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public Task getTaskById(long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task id=%d not found".formatted(id)));
+    }
+
+    public void deleteTaskById(long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task id=%d not found".formatted(id)));
+        taskRepository.delete(task);
     }
 }
