@@ -20,10 +20,12 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User createUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new InvalidUserException("Username '%s' already exists".formatted(user.getUsername()));
@@ -36,24 +38,22 @@ public class UserService implements UserDetailsService {
         return saveUser(user);
     }
 
+    @Transactional
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Transactional
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User '%s' not found".formatted(email))
-        );
-        return mapUserToUserDetails(user);
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User with id '%s' not found".formatted(id)));
     }
 
-    private UserDetails mapUserToUserDetails(User user) {
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.getAuthorities()
+    @Transactional
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("User '%s' not found".formatted(email))
         );
     }
 

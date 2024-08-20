@@ -43,16 +43,14 @@ public class Task {
     @JoinColumn(name = "assignee_id", nullable = false)
     private User assignee;
 
-    @Size(max = 50)
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 50)
+    @Column(name = "status", nullable = false)
     private Status status;
 
-    @Size(max = 50)
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "priority", nullable = false, length = 50)
+    @Column(name = "priority", nullable = false)
     private Priority priority;
 
 }
