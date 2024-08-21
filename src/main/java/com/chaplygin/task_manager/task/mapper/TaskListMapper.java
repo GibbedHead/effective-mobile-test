@@ -13,5 +13,5 @@ public interface TaskListMapper {
     @Mapping(source = "number", target = "page")
     @Mapping(source = "size", target = "size")
     @Mapping(source = "totalPages", target = "totalPages")
-    TaskPagedListResponseDto pageToTasksListResponseDtoPaged(Page<Task> page);
+    TaskPagedListResponseDto pageToTaskPagedListResponseDto(Page<Task> page);
 }

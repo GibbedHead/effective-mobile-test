@@ -1,6 +1,8 @@
 package com.chaplygin.task_manager.task.controller;
 
 import com.chaplygin.task_manager.comment.dto.CommentCreateDto;
+import com.chaplygin.task_manager.comment.dto.CommentPagedListResponseDto;
+import com.chaplygin.task_manager.comment.mapper.CommentListMapper;
 import com.chaplygin.task_manager.comment.mapper.CommentMapper;
 import com.chaplygin.task_manager.comment.model.Comment;
 import com.chaplygin.task_manager.comment.service.CommentService;
@@ -32,6 +34,7 @@ public class TaskController {
     private final TaskMapper taskMapper;
     private final TaskListMapper taskListMapper;
     private final CommentMapper commentMapper;
+    private final CommentListMapper commentListMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,7 +64,7 @@ public class TaskController {
         Page<Task> taskPage = taskService.getAllTasks(
                 page, size, title, description, status, priority, sortBy, sortDirection
         );
-        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+        return taskListMapper.pageToTaskPagedListResponseDto(taskPage);
     }
 
     @GetMapping("/user/{userId}")
@@ -79,7 +82,7 @@ public class TaskController {
         Page<Task> taskPage = taskService.getTasksForUser(
                 page, size, title, description, status, priority, sortBy, sortDirection, userId
         );
-        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+        return taskListMapper.pageToTaskPagedListResponseDto(taskPage);
     }
 
     @GetMapping("/owner/{userId}")
@@ -97,7 +100,7 @@ public class TaskController {
         Page<Task> taskPage = taskService.getTasksForOwner(
                 page, size, title, description, status, priority, sortBy, sortDirection, userId
         );
-        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+        return taskListMapper.pageToTaskPagedListResponseDto(taskPage);
     }
 
     @GetMapping("/assignee/{userId}")
@@ -115,7 +118,7 @@ public class TaskController {
         Page<Task> taskPage = taskService.getTasksForAssignee(
                 page, size, title, description, status, priority, sortBy, sortDirection, userId
         );
-        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+        return taskListMapper.pageToTaskPagedListResponseDto(taskPage);
     }
 
     @GetMapping("/{id}")
@@ -184,5 +187,16 @@ public class TaskController {
         Comment savedComment = commentService.saveComment(comment);
         foundTask.getComments().add(savedComment);
         return taskMapper.mapTaskToResponseDtoFull(foundTask);
+    }
+
+    @GetMapping("/{id}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentPagedListResponseDto getComments(
+            @PathVariable Long id,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        Page<Comment> commentPage = commentService.getCommentsByTaskId(id, page, size);
+        return commentListMapper.pageToCommentPagedListResponseDto(commentPage);
     }
 }
