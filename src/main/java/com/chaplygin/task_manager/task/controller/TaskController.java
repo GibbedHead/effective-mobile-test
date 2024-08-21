@@ -52,7 +52,63 @@ public class TaskController {
             @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection
     ) {
-        Page<Task> taskPage = taskService.getAllTasks(page, size, title, description, status, priority, sortBy, sortDirection);
+        Page<Task> taskPage = taskService.getAllTasks(
+                page, size, title, description, status, priority, sortBy, sortDirection
+        );
+        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+    }
+
+    @GetMapping("/user/{userId}")
+    public TasksListResponseDtoPaged getTasksForUser(
+            @PathVariable Long userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "status", required = false) Status status,
+            @RequestParam(value = "priority", required = false) Priority priority,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection
+    ) {
+        Page<Task> taskPage = taskService.getTasksForUser(
+                page, size, title, description, status, priority, sortBy, sortDirection, userId
+        );
+        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+    }
+
+    @GetMapping("/owner/{userId}")
+    public TasksListResponseDtoPaged getTasksForOwner(
+            @PathVariable Long userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "status", required = false) Status status,
+            @RequestParam(value = "priority", required = false) Priority priority,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection
+    ) {
+        Page<Task> taskPage = taskService.getTasksForOwner(
+                page, size, title, description, status, priority, sortBy, sortDirection, userId
+        );
+        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
+    }
+
+    @GetMapping("/assignee/{userId}")
+    public TasksListResponseDtoPaged getTasksForAssignee(
+            @PathVariable Long userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "status", required = false) Status status,
+            @RequestParam(value = "priority", required = false) Priority priority,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection
+    ) {
+        Page<Task> taskPage = taskService.getTasksForAssignee(
+                page, size, title, description, status, priority, sortBy, sortDirection, userId
+        );
         return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
     }
 

@@ -33,13 +33,76 @@ public class TaskService {
             Status status, Priority priority,
             String sortBy, String sortDirection
     ) {
-        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sortBy));
+        Pageable pageable = createPageable(page, size, sortBy, sortDirection);
+
         Specification<Task> spec = Specification.where(TaskSpecifications.hasTitle(title))
                 .and(TaskSpecifications.hasDescription(description))
                 .and(TaskSpecifications.hasStatus(status))
                 .and(TaskSpecifications.hasPriority(priority));
         return taskRepository.findAll(spec, pageable);
+    }
+
+    @Transactional
+    public Page<Task> getTasksForUser(
+            int page, int size,
+            String title, String description,
+            Status status, Priority priority,
+            String sortBy, String sortDirection,
+            Long userId) {
+
+        Pageable pageable = createPageable(page, size, sortBy, sortDirection);
+
+        Specification<Task> spec = Specification.where(TaskSpecifications.hasTitle(title))
+                .and(TaskSpecifications.hasDescription(description))
+                .and(TaskSpecifications.hasStatus(status))
+                .and(TaskSpecifications.hasPriority(priority))
+                .and(TaskSpecifications.hasOwnerOrAssignee(userId));
+
+        return taskRepository.findAll(spec, pageable);
+    }
+
+    @Transactional
+    public Page<Task> getTasksForOwner(
+            int page, int size,
+            String title, String description,
+            Status status, Priority priority,
+            String sortBy, String sortDirection,
+            Long userId) {
+
+        Pageable pageable = createPageable(page, size, sortBy, sortDirection);
+
+        Specification<Task> spec = Specification.where(TaskSpecifications.hasTitle(title))
+                .and(TaskSpecifications.hasDescription(description))
+                .and(TaskSpecifications.hasStatus(status))
+                .and(TaskSpecifications.hasPriority(priority))
+                .and(TaskSpecifications.hasOwner(userId));
+
+        return taskRepository.findAll(spec, pageable);
+
+    }
+
+    @Transactional
+    public Page<Task> getTasksForAssignee(
+            int page, int size,
+            String title, String description,
+            Status status, Priority priority,
+            String sortBy, String sortDirection,
+            Long userId) {
+
+        Pageable pageable = createPageable(page, size, sortBy, sortDirection);
+
+        Specification<Task> spec = Specification.where(TaskSpecifications.hasTitle(title))
+                .and(TaskSpecifications.hasDescription(description))
+                .and(TaskSpecifications.hasStatus(status))
+                .and(TaskSpecifications.hasPriority(priority))
+                .and(TaskSpecifications.hasAssignee(userId));
+
+        return taskRepository.findAll(spec, pageable);
+    }
+
+    private Pageable createPageable(int page, int size, String sortBy, String sortDirection) {
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return PageRequest.of(page - 1, size, Sort.by(direction, sortBy));
     }
 
     @Transactional
