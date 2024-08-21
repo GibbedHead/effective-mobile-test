@@ -20,7 +20,7 @@ public class TaskPermissionAspect {
     private final TaskService taskService;
     private final Map<String, TaskPermissionStrategy> strategies;
 
-    @Before("@annotation(checkTaskPermission) && args(taskId, ..)")
+    @Before("@annotation(checkTaskPermission) && args(.., taskId)")
     public void checkPermission(CheckTaskPermission checkTaskPermission, Long taskId) throws Throwable {
         String action = checkTaskPermission.action();
         Task task = taskService.getTaskById(taskId);

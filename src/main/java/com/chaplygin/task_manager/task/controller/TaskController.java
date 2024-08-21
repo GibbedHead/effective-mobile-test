@@ -2,6 +2,7 @@ package com.chaplygin.task_manager.task.controller;
 
 import com.chaplygin.task_manager.permission.annotation.CheckTaskPermission;
 import com.chaplygin.task_manager.task.dto.TaskCreateDto;
+import com.chaplygin.task_manager.task.dto.TaskFullUpdateDto;
 import com.chaplygin.task_manager.task.dto.TaskResponseDtoFull;
 import com.chaplygin.task_manager.task.mapper.TaskMapper;
 import com.chaplygin.task_manager.task.model.Status;
@@ -36,7 +37,7 @@ public class TaskController {
         task.setStatus(Status.NEW);
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         task.setOwner(currentUser);
-        Task savedTask = taskService.createTask(task);
+        Task savedTask = taskService.saveTask(task);
         return taskMapper.mapTaskToResponseDtoFull(savedTask);
     }
 
@@ -59,5 +60,18 @@ public class TaskController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTaskById(@PathVariable Long id) {
         taskService.deleteTaskById(id);
+    }
+
+    @CheckTaskPermission(action = "updateAll")
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskResponseDtoFull updateTask(
+            @Valid @RequestBody TaskFullUpdateDto fullUpdateDto,
+            @PathVariable Long id
+    ) {
+        Task foundTask = taskService.getTaskById(id);
+        taskMapper.partialUpdate(fullUpdateDto, foundTask);
+        Task savedTask = taskService.saveTask(foundTask);
+        return taskMapper.mapTaskToResponseDtoFull(savedTask);
     }
 }

@@ -12,6 +12,6 @@ public record TaskCreateDto(
         @NotBlank @Size(max = 255) String title,
         @NotBlank String description,
         @NotNull @Positive Long assigneeId,
-        @NotBlank @Size(max = 50) Priority priority
+        @NotNull Priority priority
 ) implements Serializable {
 }
