@@ -52,7 +52,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage()
         );
 
-        return new ResponseEntity<>(appErrorResponse, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(appErrorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

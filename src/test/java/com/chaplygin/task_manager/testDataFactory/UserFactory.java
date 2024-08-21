@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.testDataFactory;
 
+import com.chaplygin.task_manager.user.dto.UserResponseDtoFull;
 import com.chaplygin.task_manager.user.model.Role;
 import com.chaplygin.task_manager.user.model.User;
 
@@ -84,5 +85,13 @@ public class UserFactory {
         user.setPassword("$2a$10$rsZZyAVePBUTZrtNelhVfu5ZVSERN.VCSsnqLIoKCVYXDgpGDOGZK");
         user.setRole(Role.ROLE_USER);
         return user;
+    }
+
+    public static UserResponseDtoFull createUserResponseDtoFull() {
+        return new UserResponseDtoFull(
+                1L,
+                "user1@domain.com",
+                "User1"
+        );
     }
 }
