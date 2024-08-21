@@ -2,7 +2,9 @@ package com.chaplygin.task_manager.task.controller;
 
 import com.chaplygin.task_manager.permission.annotation.CheckTaskPermission;
 import com.chaplygin.task_manager.task.dto.*;
+import com.chaplygin.task_manager.task.mapper.TaskListMapper;
 import com.chaplygin.task_manager.task.mapper.TaskMapper;
+import com.chaplygin.task_manager.task.model.Priority;
 import com.chaplygin.task_manager.task.model.Status;
 import com.chaplygin.task_manager.task.model.Task;
 import com.chaplygin.task_manager.task.service.TaskService;
@@ -10,12 +12,10 @@ import com.chaplygin.task_manager.user.model.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class TaskController {
 
     private final TaskService taskService;
     private final TaskMapper taskMapper;
+    private final TaskListMapper taskListMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,10 +42,18 @@ public class TaskController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<TaskResponseDtoFull> getAllTasks() {
-        return taskService.getAllTasks().stream()
-                .map(taskMapper::mapTaskToResponseDtoFull)
-                .collect(Collectors.toList());
+    public TasksListResponseDtoPaged getAllTasks(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "status", required = false) Status status,
+            @RequestParam(value = "priority", required = false) Priority priority,
+            @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection
+    ) {
+        Page<Task> taskPage = taskService.getAllTasks(page, size, title, description, status, priority, sortBy, sortDirection);
+        return taskListMapper.pageToTasksListResponseDtoPaged(taskPage);
     }
 
     @GetMapping("/{id}")

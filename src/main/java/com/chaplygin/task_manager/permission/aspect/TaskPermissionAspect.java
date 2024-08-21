@@ -21,7 +21,7 @@ public class TaskPermissionAspect {
     private final Map<String, TaskPermissionStrategy> strategies;
 
     @Before("@annotation(checkTaskPermission) && args(.., taskId)")
-    public void checkPermission(CheckTaskPermission checkTaskPermission, Long taskId) throws Throwable {
+    public void checkPermission(CheckTaskPermission checkTaskPermission, Long taskId) {
         String action = checkTaskPermission.action();
         Task task = taskService.getTaskById(taskId);
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
