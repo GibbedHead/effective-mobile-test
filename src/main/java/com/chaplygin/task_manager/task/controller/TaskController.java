@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tasks")
+@RequestMapping("${taskManager.api.prefix}/tasks")
 @Tag(name = "Tasks controller", description = "Endpoints for managing tasks")
 public class TaskController {
 

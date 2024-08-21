@@ -20,7 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("${taskManager.api.prefix}/auth")
 @RequiredArgsConstructor
 @Tag(name = "Registration and Authentication controller", description = "Endpoints for creating/logging in users")
 public class AuthController {

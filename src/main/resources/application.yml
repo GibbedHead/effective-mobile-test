@@ -10,3 +10,7 @@ spring:
 jwt:
   secret: faadd63584c84e672ff5824b4f85226faadd63584c84e672ff5824b4f85226
   accessTokenExpiration: 100m
+
+taskManager:
+  api:
+    prefix: /api/v1

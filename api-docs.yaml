@@ -1,0 +1,1404 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Tasks controller
+  description: Endpoints for managing tasks
+- name: Registration and Authentication controller
+  description: Endpoints for creating/logging in users
+paths:
+  /api/v1/tasks/{id}:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get task by ID
+      description: "Retrieves the details of a specific task by its ID, excluding\
+        \ comments."
+      operationId: getTaskById
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task to be retrieved
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "200":
+          description: Successfully retrieved task details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoNoComments"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+    put:
+      tags:
+      - Tasks controller
+      summary: Update task by ID
+      description: "Updates the details of a specific task identified by its ID. The\
+        \ task details are provided in the request body. On success, the updated task\
+        \ is returned. If the task is not found or if there is an error, an appropriate\
+        \ error status is returned."
+      operationId: updateTask
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskFullUpdateDto"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoNoComments"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+    delete:
+      tags:
+      - Tasks controller
+      summary: Delete task by ID
+      description: "Deletes a specific task identified by its ID. If the task is successfully\
+        \ deleted, the server will respond with a 204 No Content status. If the task\
+        \ is not found or if there is an error, an appropriate error status will be\
+        \ returned."
+      operationId: deleteTaskById
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task to be deleted
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "204":
+          description: Task successfully deleted
+          content:
+            application/json: {}
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get all tasks
+      description: "Retrieves a paginated list of tasks with optional filters for\
+        \ title, description, status, and priority. The list can be sorted by various\
+        \ fields in ascending or descending order."
+      operationId: getAllTasks
+      parameters:
+      - name: page
+        in: query
+        description: Page number (1-based)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: size
+        in: query
+        description: Number of tasks per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      - name: title
+        in: query
+        description: Filter by task title
+        required: false
+        schema:
+          type: string
+        example: My Task
+      - name: description
+        in: query
+        description: Filter by task description
+        required: false
+        schema:
+          type: string
+        example: This is a sample task description
+      - name: status
+        in: query
+        description: Filter by task status
+        required: false
+        schema:
+          type: string
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        example: IN_PROGRESS
+      - name: priority
+        in: query
+        description: Filter by task priority
+        required: false
+        schema:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        example: HIGH
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: id
+        example: id
+      - name: sortDirection
+        in: query
+        description: "Sort direction: 'asc' for ascending, 'desc' for descending"
+        required: false
+        schema:
+          type: string
+          default: asc
+        example: asc
+      responses:
+        "200":
+          description: Successfully retrieved paginated list of tasks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskPagedListResponseDto"
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Server Error
+                timestamp: 2024-06-04T22:40:46.7924577
+    post:
+      tags:
+      - Tasks controller
+      summary: Create task
+      description: Creating task and returning DTO
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskCreateDto"
+        required: true
+      responses:
+        "201":
+          description: "Object, containing new task DTO"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoNoComments"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/{id}/comments:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get comments by task ID
+      description: Retrieves a paginated list of comments for a specific task identified
+        by its ID. You can specify pagination parameters to control the number of
+        comments returned per page and the page number.
+      operationId: getCommentsByTaskId
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task for which comments are to be retrieved
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: page
+        in: query
+        description: "Page number to retrieve, starting from 1"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: size
+        in: query
+        description: Number of comments per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      responses:
+        "200":
+          description: Successfully retrieved the paginated list of comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentPagedListResponseDto"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+    post:
+      tags:
+      - Tasks controller
+      summary: Add a comment to a task by ID
+      description: "Adds a comment to a specific task identified by its ID. The comment\
+        \ details are provided in the request body. On success, the updated task with\
+        \ the new comment is returned. If the task is not found or if there is an\
+        \ error, an appropriate error status is returned."
+      operationId: createComment
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task to which the comment will be added
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentCreateDto"
+        required: true
+      responses:
+        "200":
+          description: Successfully added the comment to the task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoFull"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/auth/signup:
+    post:
+      tags:
+      - Registration and Authentication controller
+      summary: SignUp
+      description: Signup new user
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+        required: true
+      responses:
+        "201":
+          description: "Object, containing new user and access token"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/auth/signin:
+    post:
+      tags:
+      - Registration and Authentication controller
+      summary: SignIn
+      description: Signin existed user
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+        required: true
+      responses:
+        "200":
+          description: "Object, containing access token"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+              example:
+                accessToken: eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MTc1Mjc1NTUsImV4cCI6MTcxNzUyODE1NSwic3ViIjoiTWFsdmluYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.utQS9pSI-CBEx-s8P2O1YsVwe7ofjQLX-YAj8b3yZ9Y-817TXbzlnuUwdOqahKHX
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 401
+                message: "Authentication error: 'Bad credentials'"
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/{id}/status:
+    patch:
+      tags:
+      - Tasks controller
+      summary: Update task status by ID
+      description: "Updates the status of a specific task identified by its ID. The\
+        \ new status is provided in the request body. On success, the updated task\
+        \ is returned. If the task is not found or if there is an error, an appropriate\
+        \ error status is returned."
+      operationId: updateTaskStatus
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task whose status is to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskStatusUpdateDto"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the task status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoNoComments"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/{id}/assignee:
+    patch:
+      tags:
+      - Tasks controller
+      summary: Update task assignee by ID
+      description: "Updates the assignee of a specific task identified by its ID.\
+        \ The new assignee details are provided in the request body. On success, the\
+        \ updated task is returned. If the task is not found or if there is an error,\
+        \ an appropriate error status is returned."
+      operationId: updateTaskAssignee
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task whose assignee is to be updated
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskAssigneeUpdateDto"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated the task assignee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponseDtoNoComments"
+        "400":
+          description: Invalid task ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: Task not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Internal server error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/user/{userId}:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get tasks for a specific user
+      description: "Retrieves a paginated list of tasks assigned or owned by a specific\
+        \ user, with optional filters for title, description, status, and priority.\
+        \ The list can be sorted by various fields in ascending or descending order."
+      operationId: getTasksForUser
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose tasks are to be retrieved
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: page
+        in: query
+        description: Page number (1-based)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: size
+        in: query
+        description: Number of tasks per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      - name: title
+        in: query
+        description: Filter by task title
+        required: false
+        schema:
+          type: string
+        example: My Task
+      - name: description
+        in: query
+        description: Filter by task description
+        required: false
+        schema:
+          type: string
+        example: This is a sample task description
+      - name: status
+        in: query
+        description: Filter by task status
+        required: false
+        schema:
+          type: string
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        example: IN_PROGRESS
+      - name: priority
+        in: query
+        description: Filter by task priority
+        required: false
+        schema:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        example: HIGH
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: id
+        example: id
+      - name: sortDirection
+        in: query
+        description: "Sort direction: 'asc' for ascending, 'desc' for descending"
+        required: false
+        schema:
+          type: string
+          default: asc
+        example: asc
+      responses:
+        "200":
+          description: Successfully retrieved paginated list of tasks for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskPagedListResponseDto"
+        "400":
+          description: Invalid request parameters or user ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: User not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Server Error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/owner/{userId}:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get tasks owned by a specific user
+      description: "Retrieves a paginated list of tasks owned by a specific user,\
+        \ with optional filters for title, description, status, and priority. The\
+        \ list can be sorted by various fields in ascending or descending order."
+      operationId: getTasksForOwner
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose tasks are to be retrieved
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: page
+        in: query
+        description: Page number (1-based)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: size
+        in: query
+        description: Number of tasks per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      - name: title
+        in: query
+        description: Filter by task title
+        required: false
+        schema:
+          type: string
+        example: My Task
+      - name: description
+        in: query
+        description: Filter by task description
+        required: false
+        schema:
+          type: string
+        example: This is a sample task description
+      - name: status
+        in: query
+        description: Filter by task status
+        required: false
+        schema:
+          type: string
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        example: IN_PROGRESS
+      - name: priority
+        in: query
+        description: Filter by task priority
+        required: false
+        schema:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        example: HIGH
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: id
+        example: id
+      - name: sortDirection
+        in: query
+        description: "Sort direction: 'asc' for ascending, 'desc' for descending"
+        required: false
+        schema:
+          type: string
+          default: asc
+        example: asc
+      responses:
+        "200":
+          description: Successfully retrieved paginated list of tasks for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskPagedListResponseDto"
+        "400":
+          description: Invalid request parameters or user ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: User not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Server Error
+                timestamp: 2024-06-04T22:40:46.7924577
+  /api/v1/tasks/assignee/{userId}:
+    get:
+      tags:
+      - Tasks controller
+      summary: Get tasks assigned to a specific user
+      description: "Retrieves a paginated list of tasks assigned to a specific user,\
+        \ with optional filters for title, description, status, and priority. The\
+        \ list can be sorted by various fields in ascending or descending order."
+      operationId: getTasksForAssignee
+      parameters:
+      - name: userId
+        in: path
+        description: ID of the user whose tasks are to be retrieved
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      - name: page
+        in: query
+        description: Page number (1-based)
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 1
+        example: 1
+      - name: size
+        in: query
+        description: Number of tasks per page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+        example: 10
+      - name: title
+        in: query
+        description: Filter by task title
+        required: false
+        schema:
+          type: string
+        example: My Task
+      - name: description
+        in: query
+        description: Filter by task description
+        required: false
+        schema:
+          type: string
+        example: This is a sample task description
+      - name: status
+        in: query
+        description: Filter by task status
+        required: false
+        schema:
+          type: string
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        example: IN_PROGRESS
+      - name: priority
+        in: query
+        description: Filter by task priority
+        required: false
+        schema:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        example: HIGH
+      - name: sortBy
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: id
+        example: id
+      - name: sortDirection
+        in: query
+        description: "Sort direction: 'asc' for ascending, 'desc' for descending"
+        required: false
+        schema:
+          type: string
+          default: asc
+        example: asc
+      responses:
+        "200":
+          description: Successfully retrieved paginated list of tasks for the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskPagedListResponseDto"
+        "400":
+          description: Invalid request parameters or user ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 400
+                message: Validation Error
+                timestamp: 2024-06-04T22:40:46.7924577
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 404
+                message: User not found
+                timestamp: 2024-06-04T22:40:46.7924577
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppErrorResponse"
+              example:
+                status: 500
+                message: Server Error
+                timestamp: 2024-06-04T22:40:46.7924577
+components:
+  schemas:
+    TaskResponseDtoNoComments:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the task.
+          format: int64
+          example: 1
+        title:
+          type: string
+          description: Title of the task.
+          example: Complete project documentation
+        description:
+          type: string
+          description: Description of the task.
+          example: Prepare and finalize the project documentation for the upcoming
+            release.
+        owner:
+          $ref: "#/components/schemas/UserResponseDtoFull"
+        assignee:
+          $ref: "#/components/schemas/UserResponseDtoFull"
+        status:
+          type: string
+          description: Current status of the task.
+          example: IN_PROGRESS
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        priority:
+          type: string
+          description: Priority level of the task.
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+      description: Data Transfer Object representing task details without comments.
+    UserResponseDtoFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User Id
+          format: int64
+          example: 1
+        email:
+          type: string
+          description: User email
+          example: user@domain.com
+        username:
+          type: string
+          description: Username
+          example: User1
+      description: User response DTO with full info
+    AppErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP Status
+          format: int32
+          example: 401
+        message:
+          type: string
+          description: Message
+          example: Access token expired
+        timestamp:
+          type: string
+          description: Timestamp
+          format: date-time
+      description: App error response
+    TaskFullUpdateDto:
+      type: object
+      properties:
+        title:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: "New title of the task. Can be null, but if provided, must\
+            \ not exceed 255 characters."
+          example: Update task management system
+        description:
+          type: string
+          description: New description of the task. Can be null.
+          example: Refactor the existing codebase for better performance.
+        assigneeId:
+          type: integer
+          description: ID of the user assigned to the task. Can be null.
+          format: int64
+          example: 123
+        status:
+          type: string
+          description: New status of the task. Can be null.
+          example: IN_PROGRESS
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        priority:
+          type: string
+          description: New priority of the task. Can be null.
+          example: MEDIUM
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+      description: Details for updating the task
+    TaskCreateDto:
+      required:
+      - assigneeId
+      - description
+      - priority
+      - title
+      type: object
+      properties:
+        title:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: Title of the task. Must not be blank and should not exceed
+            255 characters.
+          example: Implement new feature
+        description:
+          type: string
+          description: Description of the task. Must not be blank.
+          example: Implement a new feature to enhance the user experience.
+        assigneeId:
+          type: integer
+          description: ID of the user assigned to the task. Must be a positive number.
+          format: int64
+          example: 456
+        priority:
+          type: string
+          description: Priority of the task. Cannot be null.
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+      description: Data Transfer Object for creating a new task.
+    TaskResponseDtoFull:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the task.
+          format: int64
+          example: 1
+        title:
+          type: string
+          description: Title of the task.
+          example: Complete project documentation
+        description:
+          type: string
+          description: Description of the task.
+          example: Prepare and finalize the project documentation for the upcoming
+            release.
+        owner:
+          $ref: "#/components/schemas/UserResponseDtoFull"
+        assignee:
+          $ref: "#/components/schemas/UserResponseDtoFull"
+        status:
+          type: string
+          description: Current status of the task.
+          example: IN_PROGRESS
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+        priority:
+          type: string
+          description: Priority level of the task.
+          example: HIGH
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+        comments:
+          type: object
+          properties:
+            text:
+              type: string
+              description: Comment text
+              example: Very cool task!
+            author:
+              $ref: "#/components/schemas/UserResponseDtoFull"
+          description: Comment response with author
+      description: "Data Transfer Object representing the full details of a task,\
+        \ including comments."
+    CommentCreateDto:
+      required:
+      - text
+      type: object
+      properties:
+        text:
+          type: string
+          description: Comment text
+          example: Very cool task!
+      description: Details of the comment to be created
+    SignUpResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UserResponseDtoFull"
+        accessToken:
+          type: string
+          description: Access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.Sf...
+      description: SignUp response with new User and Access token
+    SignUpRequest:
+      required:
+      - email
+      - password
+      - username
+      type: object
+      properties:
+        email:
+          maxLength: 50
+          minLength: 6
+          type: string
+          description: User email
+          example: user@domain.com
+        password:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Password
+          example: mY_password
+        username:
+          maxLength: 50
+          minLength: 3
+          type: string
+          description: Username
+          example: User1
+      description: SignUp request
+    SignInResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.Sf...
+      description: SignIn response with Access token
+    SignInRequest:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          maxLength: 50
+          minLength: 6
+          type: string
+          description: User email
+          example: user@domain.com
+        password:
+          maxLength: 20
+          minLength: 1
+          type: string
+          description: Password
+          example: mY_password
+      description: SignIn request
+    TaskStatusUpdateDto:
+      type: object
+      properties:
+        status:
+          type: string
+          description: New status of the task.
+          example: IN_PROGRESS
+          enum:
+          - NEW
+          - IN_PROGRESS
+          - PENDING
+          - COMPLETED
+      description: Details for updating the task status
+    TaskAssigneeUpdateDto:
+      type: object
+      properties:
+        assigneeId:
+          type: integer
+          description: ID of the user to be assigned to the task
+          format: int64
+          example: 123
+      description: Details for updating the task assignee
+    TaskPagedListResponseDto:
+      type: object
+      properties:
+        tasks:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier of the task.
+              format: int64
+              example: 1
+            title:
+              type: string
+              description: Title of the task.
+              example: Complete project documentation
+            description:
+              type: string
+              description: Description of the task.
+              example: Prepare and finalize the project documentation for the upcoming
+                release.
+            owner:
+              $ref: "#/components/schemas/UserResponseDtoFull"
+            assignee:
+              $ref: "#/components/schemas/UserResponseDtoFull"
+            status:
+              type: string
+              description: Current status of the task.
+              example: IN_PROGRESS
+              enum:
+              - NEW
+              - IN_PROGRESS
+              - PENDING
+              - COMPLETED
+            priority:
+              type: string
+              description: Priority level of the task.
+              example: HIGH
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+          description: Data Transfer Object representing task details without comments.
+        page:
+          type: integer
+          description: Current page number in the paginated list. Starts from 1.
+          format: int32
+          example: 1
+        size:
+          type: integer
+          description: Number of tasks per page.
+          format: int32
+          example: 10
+        totalPages:
+          type: integer
+          description: Total number of pages available based on the current page size.
+          format: int32
+          example: 5
+      description: Data Transfer Object representing a paginated list of tasks without
+        comments.
+    CommentPagedListResponseDto:
+      type: object
+      properties:
+        comments:
+          type: object
+          properties:
+            text:
+              type: string
+              description: Comment text
+              example: Very cool task!
+            author:
+              $ref: "#/components/schemas/UserResponseDtoFull"
+          description: Comment response with author
+        page:
+          type: integer
+          description: Comment list page number(starts with 0)
+          format: int32
+          example: 0
+        size:
+          type: integer
+          description: Comments per page
+          format: int32
+          example: 10
+        totalPages:
+          type: integer
+          description: Comment list total pages
+          format: int32
+          example: 5
+      description: Comment list with paging info
