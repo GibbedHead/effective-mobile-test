@@ -56,6 +56,39 @@ public class TaskFactory {
         return task;
     }
 
+    public static Task createNewTask1() {
+        Task task = new Task();
+        task.setTitle("Test task1");
+        task.setDescription("Test description1");
+        task.setOwner(UserFactory.createUser1Saved());
+        task.setAssignee(UserFactory.createUser1Saved());
+        task.setStatus(Status.IN_PROGRESS);
+        task.setPriority(Priority.MEDIUM);
+        return task;
+    }
+
+    public static Task createNewTask2() {
+        Task task = new Task();
+        task.setTitle("Test task2");
+        task.setDescription("Test description2");
+        task.setOwner(UserFactory.createUser1Saved());
+        task.setAssignee(UserFactory.createUser1Saved());
+        task.setStatus(Status.IN_PROGRESS);
+        task.setPriority(Priority.MEDIUM);
+        return task;
+    }
+
+    public static Task createInvalidNewTask() {
+        Task task = new Task();
+        task.setTitle("");
+        task.setDescription("");
+        task.setOwner(null);
+        task.setAssignee(null);
+        task.setStatus(Status.IN_PROGRESS);
+        task.setPriority(Priority.MEDIUM);
+        return task;
+    }
+
     public static TaskPagedListResponseDto createTaskPagedListResponseDto() {
         return new TaskPagedListResponseDto(
                 List.of(TaskFactory.createTaskResponseDtoNoComments()),

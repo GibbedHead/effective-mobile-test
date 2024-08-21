@@ -30,8 +30,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
 
     private static final List<String> WHITELIST = List.of(
-            "/public",
-            "/auth/**",
+            "/api/v1/auth/**",
             "/swagger-ui/**",
             "/swagger-resources/*",
             "/v3/api-docs/**",

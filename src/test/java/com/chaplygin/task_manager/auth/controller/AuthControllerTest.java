@@ -26,6 +26,9 @@ import static org.mockito.BDDMockito.given;
 @AutoConfigureMockMvc
 class AuthControllerTest {
 
+    private final static String SIGN_IN_PATH = "/api/v1/auth/signin";
+    private final static String SIGN_UP_PATH = "/api/v1/auth/signup";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -45,7 +48,7 @@ class AuthControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(signUpRequest);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/auth/signup")
+                        MockMvcRequestBuilders.post(SIGN_UP_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -62,7 +65,7 @@ class AuthControllerTest {
         String nullEmailJsonRequest = objectMapper.writeValueAsString(nullEmailSignUpRequest);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/auth/signup")
+                        MockMvcRequestBuilders.post(SIGN_UP_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(nullEmailJsonRequest)
                 )
@@ -70,7 +73,7 @@ class AuthControllerTest {
     }
 
     @Test
-    public void givenValidSignInRequest_whenSignUp_thenReturnCreated() throws Exception {
+    public void givenValidSignInRequest_whenSignIn_thenReturnCreated() throws Exception {
         SignInRequest signInRequest = SignInRequestFactory.createSignInRequest();
         SignInResponse signInResponse = new SignInResponse();
         given(authService.signIn(any(User.class)))
@@ -79,7 +82,7 @@ class AuthControllerTest {
         String jsonRequest = objectMapper.writeValueAsString(signInRequest);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/auth/signin")
+                        MockMvcRequestBuilders.post(SIGN_IN_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -87,7 +90,7 @@ class AuthControllerTest {
     }
 
     @Test
-    public void givenInvalidSignInRequest_whenSignUp_thenReturnBadRequest() throws Exception {
+    public void givenInvalidSignInRequest_whenSignIn_thenReturnBadRequest() throws Exception {
         SignInRequest nullEmailSignInRequest = SignInRequestFactory.createSignInRequestNullEmail();
         SignInResponse signInResponse = new SignInResponse();
         given(authService.signIn(any(User.class)))
@@ -96,7 +99,7 @@ class AuthControllerTest {
         String nullEmailJsonRequest = objectMapper.writeValueAsString(nullEmailSignInRequest);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/auth/signin")
+                        MockMvcRequestBuilders.post(SIGN_IN_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(nullEmailJsonRequest)
                 )
