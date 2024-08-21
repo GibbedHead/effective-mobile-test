@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -125,10 +126,10 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public TaskPagedListResponseDto getAllTasks(
             @Parameter(description = "Page number (1-based)", example = "1")
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") @Positive int page,
 
             @Parameter(description = "Number of tasks per page", example = "10")
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "size", defaultValue = "10") @Positive int size,
 
             @Parameter(description = "Filter by task title", example = "My Task")
             @RequestParam(value = "title", required = false) String title,
@@ -218,10 +219,10 @@ public class TaskController {
             @PathVariable Long userId,
 
             @Parameter(description = "Page number (1-based)", example = "1")
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") @Positive int page,
 
             @Parameter(description = "Number of tasks per page", example = "10")
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "size", defaultValue = "10") @Positive int size,
 
             @Parameter(description = "Filter by task title", example = "My Task")
             @RequestParam(value = "title", required = false) String title,
@@ -311,10 +312,10 @@ public class TaskController {
             @PathVariable Long userId,
 
             @Parameter(description = "Page number (1-based)", example = "1")
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") @Positive int page,
 
             @Parameter(description = "Number of tasks per page", example = "10")
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "size", defaultValue = "10") @Positive int size,
 
             @Parameter(description = "Filter by task title", example = "My Task")
             @RequestParam(value = "title", required = false) String title,
@@ -404,10 +405,10 @@ public class TaskController {
             @PathVariable Long userId,
 
             @Parameter(description = "Page number (1-based)", example = "1")
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") @Positive int page,
 
             @Parameter(description = "Number of tasks per page", example = "10")
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "size", defaultValue = "10") @Positive int size,
 
             @Parameter(description = "Filter by task title", example = "My Task")
             @RequestParam(value = "title", required = false) String title,
@@ -941,7 +942,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public CommentPagedListResponseDto getCommentsByTaskId(
             @PathVariable Long id,
-            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") @Positive int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Page<Comment> commentPage = commentService.getCommentsByTaskId(id, page, size);
