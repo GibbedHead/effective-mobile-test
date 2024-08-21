@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class SignInRequest {
-    @Schema(description = "User email", example = "user_1@domain.com")
+    @Schema(description = "User email", example = "user@domain.com")
     @Size(min = 6, max = 50)
     @NotBlank
     String email;

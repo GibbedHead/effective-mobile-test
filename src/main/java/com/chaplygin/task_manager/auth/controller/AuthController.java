@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication controller", description = "Endpoints for creating/logging users")
+@Tag(name = "Registration and Authentication controller", description = "Endpoints for creating/logging in users")
 public class AuthController {
 
     private final AuthService authService;
@@ -30,15 +30,11 @@ public class AuthController {
 
     @Operation(summary = "SignUp", description = "Signup new user",
             responses = {
-                    @ApiResponse(description = "Object, containing access token",
-                            responseCode = "200",
+                    @ApiResponse(description = "Object, containing new user and access token",
+                            responseCode = "201",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = SignInResponse.class),
-                                    examples = @ExampleObject(value = """
-                                            {
-                                                 "accessToken": "eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MTc1Mjc1NTUsImV4cCI6MTcxNzUyODE1NSwic3ViIjoiTWFsdmluYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.utQS9pSI-CBEx-s8P2O1YsVwe7ofjQLX-YAj8b3yZ9Y-817TXbzlnuUwdOqahKHX"
-                                             }""")
+                                    schema = @Schema(implementation = SignUpResponse.class)
                             )),
                     @ApiResponse(responseCode = "400", description = "Bad request",
                             content = @Content(

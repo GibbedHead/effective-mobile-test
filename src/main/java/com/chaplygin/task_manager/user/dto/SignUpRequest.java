@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public class SignUpRequest {
 
-    @Schema(description = "User email", example = "user_1@domain.com")
+    @Schema(description = "User email", example = "user@domain.com")
     @NotBlank
     @Size(min = 6, max = 50)
     @Email
@@ -26,7 +26,7 @@ public class SignUpRequest {
     @Size(min = 1, max = 20)
     String password;
 
-    @Schema(description = "Username", example = "user_1")
+    @Schema(description = "Username", example = "User1")
     @Size(min = 3, max = 50)
     @NotBlank
     String username;
