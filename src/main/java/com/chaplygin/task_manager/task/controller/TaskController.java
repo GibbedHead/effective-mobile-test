@@ -1,5 +1,9 @@
 package com.chaplygin.task_manager.task.controller;
 
+import com.chaplygin.task_manager.comment.dto.CommentCreateDto;
+import com.chaplygin.task_manager.comment.mapper.CommentMapper;
+import com.chaplygin.task_manager.comment.model.Comment;
+import com.chaplygin.task_manager.comment.service.CommentService;
 import com.chaplygin.task_manager.permission.annotation.CheckTaskPermission;
 import com.chaplygin.task_manager.task.dto.*;
 import com.chaplygin.task_manager.task.mapper.TaskListMapper;
@@ -24,12 +28,14 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final CommentService commentService;
     private final TaskMapper taskMapper;
     private final TaskListMapper taskListMapper;
+    private final CommentMapper commentMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskResponseDtoFull createTask(
+    public TaskResponseDtoNoComments createTask(
             @Valid @RequestBody TaskCreateDto taskCreateDto
     ) {
         Task task = taskMapper.mapCreateDtoToTask(taskCreateDto);
@@ -37,12 +43,12 @@ public class TaskController {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         task.setOwner(currentUser);
         Task savedTask = taskService.saveTask(task);
-        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+        return taskMapper.mapTaskToResponseDtoNoComments(savedTask);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public TasksListResponseDtoPaged getAllTasks(
+    public TaskPagedListResponseDto getAllTasks(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "title", required = false) String title,
@@ -59,7 +65,7 @@ public class TaskController {
     }
 
     @GetMapping("/user/{userId}")
-    public TasksListResponseDtoPaged getTasksForUser(
+    public TaskPagedListResponseDto getTasksForUser(
             @PathVariable Long userId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -77,7 +83,7 @@ public class TaskController {
     }
 
     @GetMapping("/owner/{userId}")
-    public TasksListResponseDtoPaged getTasksForOwner(
+    public TaskPagedListResponseDto getTasksForOwner(
             @PathVariable Long userId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -95,7 +101,7 @@ public class TaskController {
     }
 
     @GetMapping("/assignee/{userId}")
-    public TasksListResponseDtoPaged getTasksForAssignee(
+    public TaskPagedListResponseDto getTasksForAssignee(
             @PathVariable Long userId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -114,8 +120,8 @@ public class TaskController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskResponseDtoFull getTaskById(@PathVariable Long id) {
-        return taskMapper.mapTaskToResponseDtoFull(taskService.getTaskById(id));
+    public TaskResponseDtoNoComments getTaskById(@PathVariable Long id) {
+        return taskMapper.mapTaskToResponseDtoNoComments(taskService.getTaskById(id));
     }
 
     @CheckTaskPermission(action = "delete")
@@ -128,39 +134,55 @@ public class TaskController {
     @CheckTaskPermission(action = "updateAll")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskResponseDtoFull updateTask(
+    public TaskResponseDtoNoComments updateTask(
             @Valid @RequestBody TaskFullUpdateDto fullUpdateDto,
             @PathVariable Long id
     ) {
         Task foundTask = taskService.getTaskById(id);
         taskMapper.partialUpdateFromFull(fullUpdateDto, foundTask);
         Task savedTask = taskService.saveTask(foundTask);
-        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+        return taskMapper.mapTaskToResponseDtoNoComments(savedTask);
     }
 
     @CheckTaskPermission(action = "updateStatus")
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
-    public TaskResponseDtoFull updateTaskStatus(
+    public TaskResponseDtoNoComments updateTaskStatus(
             @Valid @RequestBody TaskStatusUpdateDto statusUpdateDto,
             @PathVariable Long id
     ) {
         Task foundTask = taskService.getTaskById(id);
         taskMapper.partialUpdateFromStatus(statusUpdateDto, foundTask);
         Task savedTask = taskService.saveTask(foundTask);
-        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+        return taskMapper.mapTaskToResponseDtoNoComments(savedTask);
     }
 
     @CheckTaskPermission(action = "updateAssignee")
     @PatchMapping("/{id}/assignee")
     @ResponseStatus(HttpStatus.OK)
-    public TaskResponseDtoFull updateTaskAssignee(
+    public TaskResponseDtoNoComments updateTaskAssignee(
             @Valid @RequestBody TaskAssigneeUpdateDto assigneeUpdateDto,
             @PathVariable Long id
     ) {
         Task foundTask = taskService.getTaskById(id);
         taskMapper.partialUpdateFromAssignee(assigneeUpdateDto, foundTask);
         Task savedTask = taskService.saveTask(foundTask);
-        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+        return taskMapper.mapTaskToResponseDtoNoComments(savedTask);
+    }
+
+    @PostMapping("/{id}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskResponseDtoFull createComment(
+            @PathVariable Long id,
+            @Valid @RequestBody CommentCreateDto commentCreateDto
+    ) {
+        Task foundTask = taskService.getTaskById(id);
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Comment comment = commentMapper.mapCreateDtoToComment(commentCreateDto);
+        comment.setTask(foundTask);
+        comment.setAuthor(currentUser);
+        Comment savedComment = commentService.saveComment(comment);
+        foundTask.getComments().add(savedComment);
+        return taskMapper.mapTaskToResponseDtoFull(foundTask);
     }
 }

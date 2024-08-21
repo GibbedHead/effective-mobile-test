@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.task.model;
 
+import com.chaplygin.task_manager.comment.model.Comment;
 import com.chaplygin.task_manager.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -54,6 +56,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
     private Priority priority;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @Override
     public boolean equals(Object o) {

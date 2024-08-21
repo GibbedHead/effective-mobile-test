@@ -1,6 +1,6 @@
 package com.chaplygin.task_manager.task.mapper;
 
-import com.chaplygin.task_manager.task.dto.TasksListResponseDtoPaged;
+import com.chaplygin.task_manager.task.dto.TaskPagedListResponseDto;
 import com.chaplygin.task_manager.task.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,5 +13,5 @@ public interface TaskListMapper {
     @Mapping(source = "number", target = "page")
     @Mapping(source = "size", target = "size")
     @Mapping(source = "totalPages", target = "totalPages")
-    TasksListResponseDtoPaged pageToTasksListResponseDtoPaged(Page<Task> page);
+    TaskPagedListResponseDto pageToTasksListResponseDtoPaged(Page<Task> page);
 }
