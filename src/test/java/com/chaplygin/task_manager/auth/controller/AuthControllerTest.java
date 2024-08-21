@@ -1,6 +1,7 @@
 package com.chaplygin.task_manager.auth.controller;
 
-import com.chaplygin.task_manager.auth.dto.JwtAuthenticationResponse;
+import com.chaplygin.task_manager.auth.dto.SignInResponse;
+import com.chaplygin.task_manager.auth.dto.SignUpResponse;
 import com.chaplygin.task_manager.auth.service.AuthService;
 import com.chaplygin.task_manager.testDataFactory.SignInRequestFactory;
 import com.chaplygin.task_manager.testDataFactory.SignUpRequestFactory;
@@ -37,9 +38,9 @@ class AuthControllerTest {
     @Test
     public void givenValidSignUpRequest_whenSignUp_thenReturnCreated() throws Exception {
         SignUpRequest signUpRequest = SignUpRequestFactory.createSignUpRequest();
-        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        SignUpResponse signUpResponse = new SignUpResponse();
         given(authService.signUp(any(User.class)))
-                .willReturn(jwtAuthenticationResponse);
+                .willReturn(signUpResponse);
 
         String jsonRequest = objectMapper.writeValueAsString(signUpRequest);
 
@@ -54,9 +55,9 @@ class AuthControllerTest {
     @Test
     public void givenInvalidSignUpRequest_whenSignUp_thenReturnBadRequest() throws Exception {
         SignUpRequest nullEmailSignUpRequest = SignUpRequestFactory.createSignUpRequestNullEmail();
-        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        SignUpResponse signUpResponse = new SignUpResponse();
         given(authService.signUp(any(User.class)))
-                .willReturn(jwtAuthenticationResponse);
+                .willReturn(signUpResponse);
 
         String nullEmailJsonRequest = objectMapper.writeValueAsString(nullEmailSignUpRequest);
 
@@ -71,9 +72,9 @@ class AuthControllerTest {
     @Test
     public void givenValidSignInRequest_whenSignUp_thenReturnCreated() throws Exception {
         SignInRequest signInRequest = SignInRequestFactory.createSignInRequest();
-        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        SignInResponse signInResponse = new SignInResponse();
         given(authService.signIn(any(User.class)))
-                .willReturn(jwtAuthenticationResponse);
+                .willReturn(signInResponse);
 
         String jsonRequest = objectMapper.writeValueAsString(signInRequest);
 
@@ -82,15 +83,15 @@ class AuthControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void givenInvalidSignInRequest_whenSignUp_thenReturnBadRequest() throws Exception {
         SignInRequest nullEmailSignInRequest = SignInRequestFactory.createSignInRequestNullEmail();
-        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        SignInResponse signInResponse = new SignInResponse();
         given(authService.signIn(any(User.class)))
-                .willReturn(jwtAuthenticationResponse);
+                .willReturn(signInResponse);
 
         String nullEmailJsonRequest = objectMapper.writeValueAsString(nullEmailSignInRequest);
 

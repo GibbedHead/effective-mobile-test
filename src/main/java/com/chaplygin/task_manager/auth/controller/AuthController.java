@@ -1,6 +1,7 @@
 package com.chaplygin.task_manager.auth.controller;
 
-import com.chaplygin.task_manager.auth.dto.JwtAuthenticationResponse;
+import com.chaplygin.task_manager.auth.dto.SignInResponse;
+import com.chaplygin.task_manager.auth.dto.SignUpResponse;
 import com.chaplygin.task_manager.auth.service.AuthService;
 import com.chaplygin.task_manager.exception.model.AppErrorResponse;
 import com.chaplygin.task_manager.user.dto.SignInRequest;
@@ -15,13 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    private final UserMapper userMapper;
 
     @Operation(summary = "SignUp", description = "Signup new user",
             responses = {
@@ -38,7 +34,7 @@ public class AuthController {
                             responseCode = "200",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = JwtAuthenticationResponse.class),
+                                    schema = @Schema(implementation = SignInResponse.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                  "accessToken": "eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MTc1Mjc1NTUsImV4cCI6MTcxNzUyODE1NSwic3ViIjoiTWFsdmluYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.utQS9pSI-CBEx-s8P2O1YsVwe7ofjQLX-YAj8b3yZ9Y-817TXbzlnuUwdOqahKHX"
@@ -58,11 +54,10 @@ public class AuthController {
                     )
             })
     @PostMapping("/signup")
-    public ResponseEntity<JwtAuthenticationResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public SignUpResponse signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         User user = userMapper.mapSignUpRequestToUser(signUpRequest);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(authService.signUp(user));
+        return authService.signUp(user);
     }
 
     @Operation(summary = "SignIn", description = "Signin existed user",
@@ -71,7 +66,7 @@ public class AuthController {
                             responseCode = "200",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = JwtAuthenticationResponse.class),
+                                    schema = @Schema(implementation = SignInResponse.class),
                                     examples = @ExampleObject(value = """
                                             {
                                                  "accessToken": "eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MTc1Mjc1NTUsImV4cCI6MTcxNzUyODE1NSwic3ViIjoiTWFsdmluYSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdfQ.utQS9pSI-CBEx-s8P2O1YsVwe7ofjQLX-YAj8b3yZ9Y-817TXbzlnuUwdOqahKHX"
@@ -103,11 +98,10 @@ public class AuthController {
                     )
             })
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signIn(@Valid @RequestBody SignInRequest signInRequest) {
+    @ResponseStatus(HttpStatus.OK)
+    public SignInResponse signIn(@Valid @RequestBody SignInRequest signInRequest) {
         User user = userMapper.mapSignInRequestToUser(signInRequest);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(authService.signIn(user));
+        return authService.signIn(user);
     }
 
 }

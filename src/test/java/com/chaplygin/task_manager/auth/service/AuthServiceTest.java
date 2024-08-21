@@ -1,8 +1,11 @@
 package com.chaplygin.task_manager.auth.service;
 
-import com.chaplygin.task_manager.auth.dto.JwtAuthenticationResponse;
+import com.chaplygin.task_manager.auth.dto.SignInResponse;
+import com.chaplygin.task_manager.auth.dto.SignUpResponse;
 import com.chaplygin.task_manager.exception.model.InvalidUserException;
 import com.chaplygin.task_manager.testDataFactory.UserFactory;
+import com.chaplygin.task_manager.user.dto.UserResponseDtoFull;
+import com.chaplygin.task_manager.user.mapper.UserMapper;
 import com.chaplygin.task_manager.user.model.Role;
 import com.chaplygin.task_manager.user.model.User;
 import com.chaplygin.task_manager.user.service.UserService;
@@ -36,6 +39,8 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AuthenticationManager authenticationManager;
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private AuthService authService;
@@ -44,6 +49,7 @@ class AuthServiceTest {
     public void givenValidUser_whenSignUp_thenReturnAccessTokenResponse() {
         User userFromRequest = UserFactory.createUser1FromRequest();
         User savedUser = UserFactory.createUser1Saved();
+        UserResponseDtoFull dtoFull = new UserResponseDtoFull(1L, "email", "username");
 
         given(passwordEncoder.encode(userFromRequest.getPassword()))
                 .willReturn("encodedPassword");
@@ -51,8 +57,10 @@ class AuthServiceTest {
                 .willReturn(savedUser);
         given(jwtService.generateAccessToken(anyString(), any(Role.class)))
                 .willReturn("accessToken");
+        given(userMapper.mapUserToUserResponseDtoFull(any()))
+                .willReturn(dtoFull);
 
-        JwtAuthenticationResponse response = authService.signUp(userFromRequest);
+        SignUpResponse response = authService.signUp(userFromRequest);
 
         assertThat("accessToken").isEqualTo(response.getAccessToken());
     }
@@ -78,7 +86,7 @@ class AuthServiceTest {
         given(jwtService.generateAccessToken(anyString(), any(Role.class)))
                 .willReturn("accessToken");
 
-        JwtAuthenticationResponse response = authService.signIn(userFromRequest);
+        SignInResponse response = authService.signIn(userFromRequest);
 
         assertThat("accessToken").isEqualTo(response.getAccessToken());
     }
