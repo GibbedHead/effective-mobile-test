@@ -1,8 +1,6 @@
 package com.chaplygin.task_manager.task.mapper;
 
-import com.chaplygin.task_manager.task.dto.TaskCreateDto;
-import com.chaplygin.task_manager.task.dto.TaskFullUpdateDto;
-import com.chaplygin.task_manager.task.dto.TaskResponseDtoFull;
+import com.chaplygin.task_manager.task.dto.*;
 import com.chaplygin.task_manager.task.model.Task;
 import com.chaplygin.task_manager.user.service.UserService;
 import org.mapstruct.*;
@@ -17,7 +15,12 @@ public interface TaskMapper {
     Task mapCreateDtoToTask(TaskCreateDto taskCreateDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void partialUpdate(TaskFullUpdateDto taskCreateDto, @MappingTarget Task task);
+    void partialUpdateFromFull(TaskFullUpdateDto taskCreateDto, @MappingTarget Task task);
+
+    void partialUpdateFromStatus(TaskStatusUpdateDto taskCreateDto, @MappingTarget Task task);
+
+    @Mapping(source = "assigneeId", target = "assignee")
+    void partialUpdateFromAssignee(TaskAssigneeUpdateDto taskCreateDto, @MappingTarget Task task);
 
     TaskResponseDtoFull mapTaskToResponseDtoFull(Task task);
 

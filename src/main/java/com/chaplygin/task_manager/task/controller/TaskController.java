@@ -1,9 +1,7 @@
 package com.chaplygin.task_manager.task.controller;
 
 import com.chaplygin.task_manager.permission.annotation.CheckTaskPermission;
-import com.chaplygin.task_manager.task.dto.TaskCreateDto;
-import com.chaplygin.task_manager.task.dto.TaskFullUpdateDto;
-import com.chaplygin.task_manager.task.dto.TaskResponseDtoFull;
+import com.chaplygin.task_manager.task.dto.*;
 import com.chaplygin.task_manager.task.mapper.TaskMapper;
 import com.chaplygin.task_manager.task.model.Status;
 import com.chaplygin.task_manager.task.model.Task;
@@ -70,7 +68,33 @@ public class TaskController {
             @PathVariable Long id
     ) {
         Task foundTask = taskService.getTaskById(id);
-        taskMapper.partialUpdate(fullUpdateDto, foundTask);
+        taskMapper.partialUpdateFromFull(fullUpdateDto, foundTask);
+        Task savedTask = taskService.saveTask(foundTask);
+        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+    }
+
+    @CheckTaskPermission(action = "updateStatus")
+    @PatchMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskResponseDtoFull updateTaskStatus(
+            @Valid @RequestBody TaskStatusUpdateDto statusUpdateDto,
+            @PathVariable Long id
+    ) {
+        Task foundTask = taskService.getTaskById(id);
+        taskMapper.partialUpdateFromStatus(statusUpdateDto, foundTask);
+        Task savedTask = taskService.saveTask(foundTask);
+        return taskMapper.mapTaskToResponseDtoFull(savedTask);
+    }
+
+    @CheckTaskPermission(action = "updateAssignee")
+    @PatchMapping("/{id}/assignee")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskResponseDtoFull updateTaskAssignee(
+            @Valid @RequestBody TaskAssigneeUpdateDto assigneeUpdateDto,
+            @PathVariable Long id
+    ) {
+        Task foundTask = taskService.getTaskById(id);
+        taskMapper.partialUpdateFromAssignee(assigneeUpdateDto, foundTask);
         Task savedTask = taskService.saveTask(foundTask);
         return taskMapper.mapTaskToResponseDtoFull(savedTask);
     }
