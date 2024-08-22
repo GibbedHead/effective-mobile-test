@@ -7,6 +7,8 @@ import com.chaplygin.task_manager.task.model.Task;
 import com.chaplygin.task_manager.task.repository.TaskRepository;
 import com.chaplygin.task_manager.task.specification.TaskSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +24,13 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     @Transactional
+    @CacheEvict(value = {"tasks", "task"}, allEntries = true)
     public Task saveTask(Task task) {
         return taskRepository.save(task);
     }
 
     @Transactional
+    @Cacheable(value = "tasks")
     public Page<Task> getAllTasks(
             int page, int size,
             String title, String description,
@@ -43,6 +47,7 @@ public class TaskService {
     }
 
     @Transactional
+    @Cacheable(value = "tasks")
     public Page<Task> getTasksForUser(
             int page, int size,
             String title, String description,
@@ -62,6 +67,7 @@ public class TaskService {
     }
 
     @Transactional
+    @Cacheable(value = "tasks")
     public Page<Task> getTasksForOwner(
             int page, int size,
             String title, String description,
@@ -82,6 +88,7 @@ public class TaskService {
     }
 
     @Transactional
+    @Cacheable(value = "tasks")
     public Page<Task> getTasksForAssignee(
             int page, int size,
             String title, String description,
@@ -106,12 +113,14 @@ public class TaskService {
     }
 
     @Transactional
+    @Cacheable(value = "task", key = "#id")
     public Task getTaskById(long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task id=%d not found".formatted(id)));
     }
 
     @Transactional
+    @CacheEvict(value = {"tasks", "task"}, key = "#id")
     public void deleteTaskById(long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task id=%d not found".formatted(id)));

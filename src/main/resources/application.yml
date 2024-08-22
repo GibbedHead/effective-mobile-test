@@ -6,6 +6,8 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?serverVersion=16&charset=utf8
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+  cache:
+    type: redis
   data:
     redis:
       host: ${REDIS_HOST}
