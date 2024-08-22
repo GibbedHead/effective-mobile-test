@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.task.controller;
 
+import com.chaplygin.task_manager.BaseTest;
 import com.chaplygin.task_manager.exception.model.TaskNotFoundException;
 import com.chaplygin.task_manager.task.dto.TaskCreateDto;
 import com.chaplygin.task_manager.task.dto.TaskPagedListResponseDto;
@@ -31,7 +32,7 @@ import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TaskControllerTest {
+class TaskControllerTest extends BaseTest {
 
     private final static String TASKS_URL = "/api/v1/tasks";
     private final static String TASK_URL = "/api/v1/tasks/1";

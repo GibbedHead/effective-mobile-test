@@ -63,6 +63,6 @@ class TaskRepositoryTest {
         Page<Task> page = taskRepository.findAll(spec, pageable);
 
         assertThat(page.getTotalElements()).isEqualTo(1);
-        assertThat(page.getContent().get(0).getTitle()).isEqualTo("Test task1");
+        assertThat(page.getContent().getFirst().getTitle()).isEqualTo("Test task1");
     }
 }

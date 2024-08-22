@@ -1,5 +1,6 @@
 package com.chaplygin.task_manager.auth.controller;
 
+import com.chaplygin.task_manager.BaseTest;
 import com.chaplygin.task_manager.auth.dto.SignInResponse;
 import com.chaplygin.task_manager.auth.dto.SignUpResponse;
 import com.chaplygin.task_manager.auth.service.AuthService;
@@ -24,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthControllerTest {
+class AuthControllerTest extends BaseTest {
 
     private final static String SIGN_IN_PATH = "/api/v1/auth/signin";
     private final static String SIGN_UP_PATH = "/api/v1/auth/signup";
