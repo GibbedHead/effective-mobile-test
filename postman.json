@@ -1,0 +1,1993 @@
+{
+	"info": {
+		"_postman_id": "c55f664d-0ef6-41a6-84be-7f9dc9925ed7",
+		"name": "Effective mobile Task Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25834452"
+	},
+	"item": [
+		{
+			"name": "Delete own task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentence}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    console.log(response.json());\r",
+							"    console.log(pm.collectionVariables.get(\"accessToken\"));\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete not own task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"const email1 = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username1 = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password1 =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"\r",
+							"        pm.sendRequest({\r",
+							"            url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"            method: 'POST',\r",
+							"            body: {\r",
+							"                mode: 'raw',\r",
+							"                raw: JSON.stringify({\r",
+							"                    email: email1,\r",
+							"                    password: password1,\r",
+							"                    username: username1\r",
+							"                }),\r",
+							"                options: {\r",
+							"                    raw: {\r",
+							"                        language: 'json'\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        }, function (err, response) {\r",
+							"            if (err) { throw err; }\r",
+							"\r",
+							"            pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains access deny message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\", \"You do not have permission to delete this task.\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update own task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"pm.collectionVariables.set('updatedDescription', 'updated ' + description);\r",
+							"pm.collectionVariables.set('updatedTitle', 'updated ' + title);\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'title' and it has the word 'updated'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"title\");\r",
+							"\r",
+							"    pm.expect(jsonData.title).to.include(\"updated\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{updatedTitle}}\",\r\n    \"description\": \"{{updatedDescription}}\",\r\n    \"priority\": \"HIGH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update not own task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"pm.collectionVariables.set('updatedDescription', 'updated ' + description);\r",
+							"pm.collectionVariables.set('updatedTitle', 'updated ' + title);\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"const email1 = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username1 = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password1 =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"\r",
+							"        //creating another user and loggin in\r",
+							"        pm.sendRequest({\r",
+							"            url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"            method: 'POST',\r",
+							"            body: {\r",
+							"                mode: 'raw',\r",
+							"                raw: JSON.stringify({\r",
+							"                    email: email1,\r",
+							"                    password: password1,\r",
+							"                    username: username1\r",
+							"                }),\r",
+							"                options: {\r",
+							"                    raw: {\r",
+							"                        language: 'json'\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        }, function (err, response) {\r",
+							"            if (err) { throw err; }\r",
+							"\r",
+							"            pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'message' and it has 'Only the creator can update this task'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.include(\"Only the creator can update this task\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"{{updatedTitle}}\",\r\n    \"description\": \"{{updatedDescription}}\",\r\n    \"priority\": \"HIGH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update own task status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'status' and it has the word 'IN_PROGRESS'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"status\");\r",
+							"\r",
+							"    pm.expect(jsonData.status).to.include(\"IN_PROGRESS\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"IN_PROGRESS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}/status",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update task status by assignee",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"\r",
+							"        //logging as admin(assignee)\r",
+							"        pm.sendRequest({\r",
+							"            url: pm.collectionVariables.get(\"signInUrl\"),\r",
+							"            method: 'POST',\r",
+							"            body: {\r",
+							"                mode: 'raw',\r",
+							"                raw: JSON.stringify({\r",
+							"                    email: pm.collectionVariables.get('adminEmail'),\r",
+							"                    password: pm.collectionVariables.get('adminPassword')\r",
+							"                }),\r",
+							"                options: {\r",
+							"                    raw: {\r",
+							"                        language: 'json'\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        }, function (err, response) {\r",
+							"            if (err) { throw err; }\r",
+							"\r",
+							"            console.log(response.json());\r",
+							"            pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'status' and it has the word 'IN_PROGRESS'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"status\");\r",
+							"\r",
+							"    pm.expect(jsonData.status).to.include(\"IN_PROGRESS\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"IN_PROGRESS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}/status",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update task status by not owner and not assignee",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"const email1 = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username1 = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password1 =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"\r",
+							"        //creating another user and loggin in\r",
+							"        pm.sendRequest({\r",
+							"            url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"            method: 'POST',\r",
+							"            body: {\r",
+							"                mode: 'raw',\r",
+							"                raw: JSON.stringify({\r",
+							"                    email: email1,\r",
+							"                    password: password1,\r",
+							"                    username: username1\r",
+							"                }),\r",
+							"                options: {\r",
+							"                    raw: {\r",
+							"                        language: 'json'\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        }, function (err, response) {\r",
+							"            if (err) { throw err; }\r",
+							"\r",
+							"            pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'message' and it has 'You do not have permission to update the status of this task.'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.include(\"You do not have permission to update the status of this task.\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"IN_PROGRESS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}/status",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update own task assignee",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'assignee' and it has id = 2\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"assignee\");\r",
+							"\r",
+							"    pm.expect(jsonData.assignee.id).to.eq(2);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"assigneeId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}/assignee",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"assignee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update task assignee by not owner",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const description = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+							"const title = pm.variables.replaceIn(\"{{$randomCatchPhrase}}\");\r",
+							"\r",
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"const email1 = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username1 = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password1 =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"\r",
+							"    //creating task\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) { throw err; }\r",
+							"\r",
+							"        pm.collectionVariables.set('taskId', response.json().id);\r",
+							"        console.log(response.json());\r",
+							"\r",
+							"        //creating another user and loggin in\r",
+							"        pm.sendRequest({\r",
+							"            url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"            method: 'POST',\r",
+							"            body: {\r",
+							"                mode: 'raw',\r",
+							"                raw: JSON.stringify({\r",
+							"                    email: email1,\r",
+							"                    password: password1,\r",
+							"                    username: username1\r",
+							"                }),\r",
+							"                options: {\r",
+							"                    raw: {\r",
+							"                        language: 'json'\r",
+							"                    }\r",
+							"                }\r",
+							"            }\r",
+							"        }, function (err, response) {\r",
+							"            if (err) { throw err; }\r",
+							"\r",
+							"            pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is JSON\", function () {\r",
+							"     pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response body contains 'message' and it has 'You do not have permission to update assignee of this task.'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"\r",
+							"    pm.expect(jsonData.message).to.include(\"You do not have permission to update assignee of this task.\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"assigneeId\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/{{taskId}}/assignee",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"{{taskId}}",
+						"assignee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tasks paged",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks?page=1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tasks filtered",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks?sortBy=title&size=20&title=updated",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "title"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						},
+						{
+							"key": "title",
+							"value": "updated"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get admin tasks",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//logging as admin\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signInUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: pm.collectionVariables.get('adminEmail'),\r",
+							"            password: pm.collectionVariables.get('adminPassword')\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/user/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get admin as owner tasks",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"//logging as admin\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signInUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: pm.collectionVariables.get('adminEmail'),\r",
+							"            password: pm.collectionVariables.get('adminPassword')\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/owner/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"owner",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get admin as assignee tasks",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//logging as admin\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signInUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: pm.collectionVariables.get('adminEmail'),\r",
+							"            password: pm.collectionVariables.get('adminPassword')\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/assignee/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"assignee",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add comment to task 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const email = pm.variables.replaceIn(\"{{$randomExampleEmail}}\");\r",
+							"const username = pm.variables.replaceIn(\"{{$randomUserName}}\");\r",
+							"const password =  pm.variables.replaceIn(\"{{$randomColor}}\");\r",
+							"\r",
+							"pm.collectionVariables.set('commentText', pm.variables.replaceIn(\"{{$randomPhrase}}\"));\r",
+							"\r",
+							"//creating user\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signUpUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: email,\r",
+							"            password: password,\r",
+							"            username: username\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"{{commentText}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/tasks/2/comments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"2",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get task 2 comment",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//logging as admin\r",
+							"pm.sendRequest({\r",
+							"    url: pm.collectionVariables.get(\"signInUrl\"),\r",
+							"    method: 'POST',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify({\r",
+							"            email: pm.collectionVariables.get('adminEmail'),\r",
+							"            password: pm.collectionVariables.get('adminPassword')\r",
+							"        }),\r",
+							"        options: {\r",
+							"            raw: {\r",
+							"                language: 'json'\r",
+							"            }\r",
+							"        }\r",
+							"    }\r",
+							"}, function (err, response) {\r",
+							"    if (err) { throw err; }\r",
+							"\r",
+							"    pm.collectionVariables.set('accessToken', response.json().accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks/2/comments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks",
+						"2",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create and get 1000 tasks",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Общее количество задач, которые нужно создать\r",
+							"const totalTasks = 1000;\r",
+							"\r",
+							"// Функция для создания задачи\r",
+							"function createTask(taskNumber) {\r",
+							"    const title = `Task ${taskNumber}`;\r",
+							"    const description = `Description for task ${taskNumber}`;\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: pm.collectionVariables.get(\"createTaskUrl\"),\r",
+							"        method: 'POST',\r",
+							"        header: {\r",
+							"            'Authorization': 'Bearer ' + pm.collectionVariables.get(\"accessToken\"),\r",
+							"            'Content-Type': 'application/json'\r",
+							"        },\r",
+							"        body: {\r",
+							"            mode: 'raw',\r",
+							"            raw: JSON.stringify({\r",
+							"                title: title,\r",
+							"                description: description,\r",
+							"                assigneeId: 1,\r",
+							"                priority: 'MEDIUM'\r",
+							"            }),\r",
+							"            options: {\r",
+							"                raw: {\r",
+							"                    language: 'json'\r",
+							"                }\r",
+							"            }\r",
+							"        }\r",
+							"    }, function (err, response) {\r",
+							"        if (err) {\r",
+							"            console.error(`Failed to create task ${taskNumber}:`, err);\r",
+							"        } else {\r",
+							"            console.log(`Successfully created task ${taskNumber}`);\r",
+							"            if (taskNumber < totalTasks) {\r",
+							"                createTask(taskNumber + 1); // Создаем следующую задачу\r",
+							"            }\r",
+							"        }\r",
+							"    });\r",
+							"}\r",
+							"\r",
+							"// Запуск создания задач\r",
+							"createTask(1);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks?size=1500",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "size",
+							"value": "1500"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get 1000 tasks",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/tasks?size=1500",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "size",
+							"value": "1500"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "adminEmail",
+			"value": "admin@domain.com",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "firstUserEmail",
+			"value": "user1@doamin.com",
+			"type": "string"
+		},
+		{
+			"key": "firstUserPassword",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "signInUrl",
+			"value": "http://localhost:8080/api/v1/auth/signin",
+			"type": "string"
+		},
+		{
+			"key": "createTaskUrl",
+			"value": "http://localhost:8080/api/v1/tasks",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "taskId",
+			"value": ""
+		},
+		{
+			"key": "signUpUrl",
+			"value": "http://localhost:8080/api/v1/auth/signup",
+			"type": "string"
+		},
+		{
+			"key": "updatedDescription",
+			"value": ""
+		},
+		{
+			"key": "updatedTitle",
+			"value": ""
+		},
+		{
+			"key": "commentText",
+			"value": ""
+		}
+	]
+}
