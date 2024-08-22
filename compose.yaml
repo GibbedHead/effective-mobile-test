@@ -8,3 +8,40 @@ services:
       POSTGRES_USER: task_manager
     ports:
       - 5432:5432
+    volumes:
+      - ./src/test/resources/schema.sql:/docker-entrypoint-initdb.d/1schema.sql
+      - ./src/test/resources/data.sql:/docker-entrypoint-initdb.d/2data.sql
+    networks:
+      - taskmanager-network
+
+  redis:
+    image: redis:7.4.0-alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    networks:
+      - taskmanager-network
+
+  task-manager:
+    build:
+      context: .
+      dockerfile: .docker/AppDockerfile
+    container_name: task-manager
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: task_manager
+      POSTGRES_PASSWORD: task_manager
+      POSTGRES_USER: task_manager
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - taskmanager-network
+
+networks:
+  taskmanager-network:
